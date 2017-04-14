@@ -72,11 +72,25 @@ public abstract class SwipeMenuLayout extends FrameLayout {
         init();
     }
 
+    public void init() {
+        ViewConfiguration mViewConfig = ViewConfiguration.get(getContext());
+        mScaledTouchSlop = mViewConfig.getScaledTouchSlop();
+        mScroller = new OverScroller(getContext(), mInterpolator);
+        mScaledMinimumFlingVelocity = mViewConfig.getScaledMinimumFlingVelocity();
+        mScaledMaximumFlingVelocity = mViewConfig.getScaledMaximumFlingVelocity();
+    }
+
     public void smoothOpenBeginMenu() {
         if (mBeginSwiper == null) throw new IllegalArgumentException("Not have begin menu!");
         mCurrentSwiper = mBeginSwiper;
         smoothOpenMenu();
     }
+
+    public void smoothOpenMenu() {
+        smoothOpenMenu(mScrollerDuration);
+    }
+
+    public abstract void smoothOpenMenu(int duration);
 
     public void smoothOpenEndMenu() {
         if (mEndSwiper == null) throw new IllegalArgumentException("Not have end menu!");
@@ -90,51 +104,17 @@ public abstract class SwipeMenuLayout extends FrameLayout {
         smoothCloseMenu();
     }
 
+    public void smoothCloseMenu() {
+        smoothCloseMenu(mScrollerDuration);
+    }
+
+    public abstract void smoothCloseMenu(int duration);
+
     public void smoothCloseEndMenu() {
         if (mEndSwiper == null) throw new IllegalArgumentException("Not have end menu!");
         mCurrentSwiper = mEndSwiper;
         smoothCloseMenu();
     }
-
-    public abstract void smoothOpenMenu(int duration);
-
-    public void smoothOpenMenu() {
-        smoothOpenMenu(mScrollerDuration);
-    }
-
-    public abstract void smoothCloseMenu(int duration);
-
-    public void smoothCloseMenu() {
-        smoothCloseMenu(mScrollerDuration);
-    }
-
-    public void init() {
-        ViewConfiguration mViewConfig = ViewConfiguration.get(getContext());
-        mScaledTouchSlop = mViewConfig.getScaledTouchSlop();
-        mScroller = new OverScroller(getContext(), mInterpolator);
-        mScaledMinimumFlingVelocity = mViewConfig.getScaledMinimumFlingVelocity();
-        mScaledMaximumFlingVelocity = mViewConfig.getScaledMaximumFlingVelocity();
-    }
-
-    public void setSwipeEnable(boolean swipeEnable) {
-        this.swipeEnable = swipeEnable;
-    }
-
-    public boolean isSwipeEnable() {
-        return swipeEnable;
-    }
-
-    public void setSwipeListener(SwipeSwitchListener swipeSwitchListener) {
-        mSwipeSwitchListener = swipeSwitchListener;
-    }
-
-    public void setSwipeFractionListener(SwipeFractionListener swipeFractionListener) {
-        mSwipeFractionListener = swipeFractionListener;
-    }
-
-    abstract int getMoveLen(MotionEvent event);
-
-    abstract int getLen();
 
     /**
      * compute finish duration
@@ -161,9 +141,29 @@ public abstract class SwipeMenuLayout extends FrameLayout {
         return duration;
     }
 
+    abstract int getMoveLen(MotionEvent event);
+
+    abstract int getLen();
+
     float distanceInfluenceForSnapDuration(float f) {
         f -= 0.5f; // center the values about 0.
         f *= 0.3f * Math.PI / 2.0f;
         return (float) Math.sin(f);
+    }
+
+    public boolean isSwipeEnable() {
+        return swipeEnable;
+    }
+
+    public void setSwipeEnable(boolean swipeEnable) {
+        this.swipeEnable = swipeEnable;
+    }
+
+    public void setSwipeListener(SwipeSwitchListener swipeSwitchListener) {
+        mSwipeSwitchListener = swipeSwitchListener;
+    }
+
+    public void setSwipeFractionListener(SwipeFractionListener swipeFractionListener) {
+        mSwipeFractionListener = swipeFractionListener;
     }
 }

@@ -6,13 +6,17 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class SwipeMenuRecyclerView extends RecyclerView implements SwipeMenuHelper.Callback{
+public class SwipeMenuRecyclerView extends RecyclerView implements SwipeMenuHelper.Callback {
 
     protected SwipeMenuHelper mHelper;
 
     public SwipeMenuRecyclerView(Context context) {
         super(context);
         init();
+    }
+
+    protected void init() {
+        mHelper = new SwipeMenuHelper(getContext(), this);
     }
 
     public SwipeMenuRecyclerView(Context context, AttributeSet attrs) {
@@ -23,10 +27,6 @@ public class SwipeMenuRecyclerView extends RecyclerView implements SwipeMenuHelp
     public SwipeMenuRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
-    }
-
-    protected void init() {
-        mHelper = new SwipeMenuHelper(getContext(), this);
     }
 
     @Override

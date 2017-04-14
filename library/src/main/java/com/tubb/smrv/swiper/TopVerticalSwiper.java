@@ -3,8 +3,6 @@ package com.tubb.smrv.swiper;
 import android.view.View;
 import android.widget.OverScroller;
 
-import com.tubb.smrv.swiper.Swiper;
-
 /**
  * Created by tubingbing on 16/4/11.
  */
@@ -26,7 +24,7 @@ public class TopVerticalSwiper extends Swiper {
 
     @Override
     public void autoOpenMenu(OverScroller scroller, int scrollY, int duration) {
-        scroller.startScroll(0, Math.abs(scrollY), 0, getMenuView().getHeight()-Math.abs(scrollY), duration);
+        scroller.startScroll(0, Math.abs(scrollY), 0, getMenuView().getHeight() - Math.abs(scrollY), duration);
     }
 
     @Override
@@ -39,13 +37,13 @@ public class TopVerticalSwiper extends Swiper {
         mChecker.x = x;
         mChecker.y = y;
         mChecker.shouldResetSwiper = false;
-        if(mChecker.y == 0){
+        if (mChecker.y == 0) {
             mChecker.shouldResetSwiper = true;
         }
-        if (mChecker.y >= 0){
+        if (mChecker.y >= 0) {
             mChecker.y = 0;
         }
-        if (mChecker.y <= -getMenuView().getHeight()){
+        if (mChecker.y <= -getMenuView().getHeight()) {
             mChecker.y = -getMenuView().getHeight();
         }
         return mChecker;

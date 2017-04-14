@@ -24,7 +24,7 @@ public class BottomVerticalSwiper extends Swiper {
 
     @Override
     public void autoOpenMenu(OverScroller scroller, int scrollY, int duration) {
-        scroller.startScroll(0, Math.abs(scrollY), 0, getMenuView().getHeight()-Math.abs(scrollY), duration);
+        scroller.startScroll(0, Math.abs(scrollY), 0, getMenuView().getHeight() - Math.abs(scrollY), duration);
     }
 
     @Override
@@ -37,13 +37,13 @@ public class BottomVerticalSwiper extends Swiper {
         mChecker.x = x;
         mChecker.y = y;
         mChecker.shouldResetSwiper = false;
-        if(mChecker.y == 0){
+        if (mChecker.y == 0) {
             mChecker.shouldResetSwiper = true;
         }
-        if (mChecker.y < 0){
+        if (mChecker.y < 0) {
             mChecker.y = 0;
         }
-        if (mChecker.y > getMenuView().getHeight()){
+        if (mChecker.y > getMenuView().getHeight()) {
             mChecker.y = getMenuView().getHeight();
         }
         return mChecker;

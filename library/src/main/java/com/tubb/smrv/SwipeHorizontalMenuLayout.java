@@ -65,6 +65,11 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         return isIntercepted;
     }
 
+    public boolean isMenuOpen() {
+        return (mBeginSwiper != null && mBeginSwiper.isMenuOpen(getScrollX()))
+                || (mEndSwiper != null && mEndSwiper.isMenuOpen(getScrollX()));
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (mVelocityTracker == null) mVelocityTracker = VelocityTracker.obtain();
@@ -85,7 +90,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                         && Math.abs(disX) > mScaledTouchSlop
                         && Math.abs(disX) > Math.abs(disY)) {
                     ViewParent parent = getParent();
-                    if(parent!= null){
+                    if (parent != null) {
                         parent.requestDisallowInterceptTouchEvent(true);
                     }
                     mDragging = true;
@@ -112,7 +117,7 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 ViewParent parent = getParent();
-                if(parent!= null){
+                if (parent != null) {
                     parent.requestDisallowInterceptTouchEvent(false);
                 }
                 dx = (int) (mDownX - ev.getX());
@@ -167,6 +172,20 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         return super.onTouchEvent(ev);
     }
 
+    public boolean isSwipeEnable() {
+        return swipeEnable;
+    }
+
+    public void smoothOpenMenu(int duration) {
+        mCurrentSwiper.autoOpenMenu(mScroller, getScrollX(), duration);
+        invalidate();
+    }
+
+    public void smoothCloseMenu(int duration) {
+        mCurrentSwiper.autoCloseMenu(mScroller, getScrollX(), duration);
+        invalidate();
+    }
+
     private void judgeOpenClose(int dx, int dy) {
         if (mCurrentSwiper != null) {
             if (Math.abs(getScrollX()) >= (mCurrentSwiper.getMenuView().getWidth() * mAutoOpenPercent)) { // auto open
@@ -179,6 +198,29 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                 }
             } else { // auto close
                 smoothCloseMenu();
+            }
+        }
+    }
+
+    public boolean isMenuOpenNotEqual() {
+        return (mBeginSwiper != null && mBeginSwiper.isMenuOpenNotEqual(getScrollX()))
+                || (mEndSwiper != null && mEndSwiper.isMenuOpenNotEqual(getScrollX()));
+    }
+
+    public void setSwipeEnable(boolean swipeEnable) {
+        this.swipeEnable = swipeEnable;
+    }
+
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            int currX = Math.abs(mScroller.getCurrX());
+            if (mCurrentSwiper instanceof RightHorizontalSwiper) {
+                scrollTo(currX, 0);
+                invalidate();
+            } else {
+                scrollTo(-currX, 0);
+                invalidate();
             }
         }
     }
@@ -225,18 +267,8 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         mPreScrollX = getScrollX();
     }
 
-    @Override
-    public void computeScroll() {
-        if (mScroller.computeScrollOffset()) {
-            int currX = Math.abs(mScroller.getCurrX());
-            if (mCurrentSwiper instanceof RightHorizontalSwiper) {
-                scrollTo(currX, 0);
-                invalidate();
-            } else {
-                scrollTo(-currX, 0);
-                invalidate();
-            }
-        }
+    public void setSwipeListener(SwipeSwitchListener swipeSwitchListener) {
+        mSwipeSwitchListener = swipeSwitchListener;
     }
 
     @Override
@@ -254,26 +286,6 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
         }
         if (menuViewLeft != null) mBeginSwiper = new LeftHorizontalSwiper(menuViewLeft);
         if (menuViewRight != null) mEndSwiper = new RightHorizontalSwiper(menuViewRight);
-    }
-
-    public boolean isMenuOpen() {
-        return (mBeginSwiper != null && mBeginSwiper.isMenuOpen(getScrollX()))
-                || (mEndSwiper != null && mEndSwiper.isMenuOpen(getScrollX()));
-    }
-
-    public boolean isMenuOpenNotEqual() {
-        return (mBeginSwiper != null && mBeginSwiper.isMenuOpenNotEqual(getScrollX()))
-                || (mEndSwiper != null && mEndSwiper.isMenuOpenNotEqual(getScrollX()));
-    }
-
-    public void smoothOpenMenu(int duration) {
-        mCurrentSwiper.autoOpenMenu(mScroller, getScrollX(), duration);
-        invalidate();
-    }
-
-    public void smoothCloseMenu(int duration) {
-        mCurrentSwiper.autoCloseMenu(mScroller, getScrollX(), duration);
-        invalidate();
     }
 
     @Override
@@ -309,18 +321,6 @@ public class SwipeHorizontalMenuLayout extends SwipeMenuLayout {
                     0,
                     tGap + menuViewHeight);
         }
-    }
-
-    public void setSwipeEnable(boolean swipeEnable) {
-        this.swipeEnable = swipeEnable;
-    }
-
-    public boolean isSwipeEnable() {
-        return swipeEnable;
-    }
-
-    public void setSwipeListener(SwipeSwitchListener swipeSwitchListener) {
-        mSwipeSwitchListener = swipeSwitchListener;
     }
 
     int getLen() {

@@ -24,7 +24,7 @@ public class LeftHorizontalSwiper extends Swiper {
 
     @Override
     public void autoOpenMenu(OverScroller scroller, int scrollX, int duration) {
-        scroller.startScroll(Math.abs(scrollX), 0, getMenuView().getWidth()-Math.abs(scrollX), 0, duration);
+        scroller.startScroll(Math.abs(scrollX), 0, getMenuView().getWidth() - Math.abs(scrollX), 0, duration);
     }
 
     @Override
@@ -37,13 +37,13 @@ public class LeftHorizontalSwiper extends Swiper {
         mChecker.x = x;
         mChecker.y = y;
         mChecker.shouldResetSwiper = false;
-        if(mChecker.x == 0){
+        if (mChecker.x == 0) {
             mChecker.shouldResetSwiper = true;
         }
-        if (mChecker.x >= 0){
+        if (mChecker.x >= 0) {
             mChecker.x = 0;
         }
-        if (mChecker.x <= -getMenuView().getWidth()){
+        if (mChecker.x <= -getMenuView().getWidth()) {
             mChecker.x = -getMenuView().getWidth();
         }
         return mChecker;

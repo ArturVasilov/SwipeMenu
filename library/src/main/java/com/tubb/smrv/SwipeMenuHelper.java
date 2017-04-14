@@ -30,7 +30,8 @@ public class SwipeMenuHelper {
 
     /**
      * Handle touch down event, decide whether intercept or not.
-     * @param ev Touch event
+     *
+     * @param ev                 Touch event
      * @param defaultIntercepted The default intercept status
      * @return Whether intercept or not
      */
@@ -66,29 +67,6 @@ public class SwipeMenuHelper {
         return isIntercepted;
     }
 
-    public View getSwipeMenuView(ViewGroup itemView) {
-        if (itemView instanceof SwipeHorizontalMenuLayout) {
-            return itemView;
-        }
-        List<View> unvisited = new ArrayList<>();
-        unvisited.add(itemView);
-        while (!unvisited.isEmpty()) {
-            View child = unvisited.remove(0);
-            if (!(child instanceof ViewGroup)) { // view
-                continue;
-            }
-            if (child instanceof SwipeHorizontalMenuLayout) {
-                return child;
-            }
-            ViewGroup group = (ViewGroup) child;
-            final int childCount = group.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                unvisited.add(group.getChildAt(i));
-            }
-        }
-        return itemView;
-    }
-
     /**
      * Find the topmost view under the given point.
      *
@@ -112,11 +90,37 @@ public class SwipeMenuHelper {
         return null;
     }
 
+    public View getSwipeMenuView(ViewGroup itemView) {
+        if (itemView instanceof SwipeHorizontalMenuLayout) {
+            return itemView;
+        }
+        List<View> unvisited = new ArrayList<>();
+        unvisited.add(itemView);
+        while (!unvisited.isEmpty()) {
+            View child = unvisited.remove(0);
+            if (!(child instanceof ViewGroup)) { // view
+                continue;
+            }
+            if (child instanceof SwipeHorizontalMenuLayout) {
+                return child;
+            }
+            ViewGroup group = (ViewGroup) child;
+            final int childCount = group.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                unvisited.add(group.getChildAt(i));
+            }
+        }
+        return itemView;
+    }
+
     public interface Callback {
         int getPositionForView(View view);
-        int getRealChildCount();
+
         View getRealChildAt(int index);
+
         View transformTouchingView(int touchingPosition, View touchingView);
+
+        int getRealChildCount();
     }
 
 }

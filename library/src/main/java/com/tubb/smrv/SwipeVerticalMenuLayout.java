@@ -3,7 +3,6 @@ package com.tubb.smrv;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -65,6 +64,11 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
         return isIntercepted;
     }
 
+    public boolean isMenuOpen() {
+        return (mBeginSwiper != null && mBeginSwiper.isMenuOpen(getScrollY()))
+                || (mEndSwiper != null && mEndSwiper.isMenuOpen(getScrollY()));
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (mVelocityTracker == null) mVelocityTracker = VelocityTracker.obtain();
@@ -85,7 +89,7 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
                         && Math.abs(disY) > mScaledTouchSlop
                         && Math.abs(disY) > Math.abs(disX)) {
                     ViewParent parent = getParent();
-                    if(parent!= null){
+                    if (parent != null) {
                         parent.requestDisallowInterceptTouchEvent(true);
                     }
                     mDragging = true;
@@ -112,7 +116,7 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 ViewParent parent = getParent();
-                if(parent!= null){
+                if (parent != null) {
                     parent.requestDisallowInterceptTouchEvent(false);
                 }
                 dx = (int) (mDownX - ev.getX());
@@ -167,6 +171,16 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
         return super.onTouchEvent(ev);
     }
 
+    public void smoothOpenMenu(int duration) {
+        mCurrentSwiper.autoOpenMenu(mScroller, getScrollY(), duration);
+        invalidate();
+    }
+
+    public void smoothCloseMenu(int duration) {
+        mCurrentSwiper.autoCloseMenu(mScroller, getScrollY(), duration);
+        invalidate();
+    }
+
     private void judgeOpenClose(int dx, int dy) {
         if (mCurrentSwiper != null) {
             if (Math.abs(getScrollY()) >= (mCurrentSwiper.getMenuView().getHeight() * mAutoOpenPercent)) { // auto open
@@ -183,6 +197,25 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
                 }
             } else { // auto close
                 smoothCloseMenu();
+            }
+        }
+    }
+
+    public boolean isMenuOpenNotEqual() {
+        return (mBeginSwiper != null && mBeginSwiper.isMenuOpenNotEqual(getScrollY()))
+                || (mEndSwiper != null && mEndSwiper.isMenuOpenNotEqual(getScrollY()));
+    }
+
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {
+            int currY = Math.abs(mScroller.getCurrY());
+            if (mCurrentSwiper instanceof BottomVerticalSwiper) {
+                scrollTo(0, currY);
+                invalidate();
+            } else {
+                scrollTo(0, -currY);
+                invalidate();
             }
         }
     }
@@ -231,20 +264,6 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
     }
 
     @Override
-    public void computeScroll() {
-        if (mScroller.computeScrollOffset()) {
-            int currY = Math.abs(mScroller.getCurrY());
-            if (mCurrentSwiper instanceof BottomVerticalSwiper) {
-                scrollTo(0, currY);
-                invalidate();
-            } else {
-                scrollTo(0, -currY);
-                invalidate();
-            }
-        }
-    }
-
-    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         setClickable(true);
@@ -259,26 +278,6 @@ public class SwipeVerticalMenuLayout extends SwipeMenuLayout {
         }
         if (menuViewTop != null) mBeginSwiper = new TopVerticalSwiper(menuViewTop);
         if (menuViewBottom != null) mEndSwiper = new BottomVerticalSwiper(menuViewBottom);
-    }
-
-    public boolean isMenuOpen() {
-        return (mBeginSwiper != null && mBeginSwiper.isMenuOpen(getScrollY()))
-                || (mEndSwiper != null && mEndSwiper.isMenuOpen(getScrollY()));
-    }
-
-    public boolean isMenuOpenNotEqual() {
-        return (mBeginSwiper != null && mBeginSwiper.isMenuOpenNotEqual(getScrollY()))
-                || (mEndSwiper != null && mEndSwiper.isMenuOpenNotEqual(getScrollY()));
-    }
-
-    public void smoothOpenMenu(int duration) {
-        mCurrentSwiper.autoOpenMenu(mScroller, getScrollY(), duration);
-        invalidate();
-    }
-
-    public void smoothCloseMenu(int duration) {
-        mCurrentSwiper.autoCloseMenu(mScroller, getScrollY(), duration);
-        invalidate();
     }
 
     @Override
